@@ -1,14 +1,11 @@
 package me.sohier.vrbh.oauth;
 
-import java.io.UnsupportedEncodingException;
-
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.util.EntityUtils;
 
-import oauth.signpost.OAuth;
 import oauth.signpost.OAuthConsumer;
 import oauth.signpost.OAuthProvider;
 import oauth.signpost.commonshttp.CommonsHttpOAuthConsumer;
@@ -46,7 +43,7 @@ public class OAuthMain {
     private OAuthListener mListener;
 
     public OAuthMain(Context context, String consumerKey, String consumerSecret) {
-        Log.i("oauth", "Startin oauth main class");
+        Log.i("oauth", "Starting oauth main class");
 
         mContext = context;
         mConsumer = new CommonsHttpOAuthConsumer(consumerKey, consumerSecret);

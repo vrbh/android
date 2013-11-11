@@ -4,19 +4,16 @@ import android.app.Activity;
 import android.app.Fragment;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.StrictMode;
 import android.util.Log;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
+import me.sohier.vrbh.oauth.OAuthConstants;
 import me.sohier.vrbh.oauth.OAuthListener;
 import me.sohier.vrbh.oauth.OAuthMain;
-import oauth.signpost.exception.OAuthCommunicationException;
-import oauth.signpost.exception.OAuthExpectationFailedException;
-import oauth.signpost.exception.OAuthMessageSignerException;
-import oauth.signpost.exception.OAuthNotAuthorizedException;
+import oauth.signpost.exception.OAuthException;
 
 public class StartActivity extends Activity {
 
@@ -32,7 +29,9 @@ public class StartActivity extends Activity {
 
         }
 
-        OAuthMain login = new OAuthMain(this, "", "");
+        StrictMode.enableDefaults();
+
+        OAuthMain login = new OAuthMain(this, OAuthConstants.PUBLIC_KEY, OAuthConstants.SECRET);
 
         Log.e("Starting", " Startup");
 
@@ -46,33 +45,29 @@ public class StartActivity extends Activity {
                     @Override
                     public void onOAuthComplete() {
 
+                        Log.e("onOAuthComplete", "OK!");
                     }
 
                     @Override
                     public void onOAuthCancel() {
-
+                        Log.e("onOAuthCancel", "Cancel!");
                     }
 
                     @Override
                     public void onOAuthError(int errorCode, String description, String failingUrl) {
-
+                        Log.e("startactivity/onoautherror", errorCode + ": " + description);
                     }
                 });
-            } catch (OAuthMessageSignerException e) {
-                e.printStackTrace();
-            } catch (OAuthNotAuthorizedException e) {
-                e.printStackTrace();
-            } catch (OAuthExpectationFailedException e) {
-                e.printStackTrace();
-            } catch (OAuthCommunicationException e) {
-                e.printStackTrace();
+            } catch (OAuthException e) {
+                // Something went wrong with the connection to the server.
+                // @TODO: Display a nice message to the user instead just closing the app.
+                Log.e("startactivity/oauth/error", "Something went wrong with the server?", e);
+                this.finish();
+                return;
             }
         }
 
         Intent detailIntent = new Intent(this, productListActivity.class);
-
-
-
 
         startActivity(detailIntent);
         this.finish();
@@ -89,9 +84,7 @@ public class StartActivity extends Activity {
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                 Bundle savedInstanceState) {
-            View rootView = inflater.inflate(R.layout.fragment_start, container, false);
-            return rootView;
+            return inflater.inflate(R.layout.fragment_start, container, false);
         }
     }
-
 }
