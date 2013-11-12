@@ -1,21 +1,25 @@
 package me.sohier.vrbh;
 
-import android.app.Activity;
-import android.app.Fragment;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.StrictMode;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import me.sohier.vrbh.oauth.OAuthConstants;
-import me.sohier.vrbh.oauth.OAuthListener;
-import me.sohier.vrbh.oauth.OAuthMain;
-import oauth.signpost.exception.OAuthException;
+import com.google.api.client.auth.oauth2.Credential;
+import com.wuman.android.auth.OAuthManager;
 
-public class StartActivity extends Activity {
+import java.io.IOException;
+
+import me.sohier.vrbh.internal.API;
+
+
+public class StartActivity extends FragmentActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -23,7 +27,7 @@ public class StartActivity extends Activity {
         setContentView(R.layout.activity_start);
 
         if (savedInstanceState == null) {
-            getFragmentManager().beginTransaction()
+            getSupportFragmentManager().beginTransaction()
                     .add(R.id.container, new PlaceholderFragment())
                     .commit();
 
@@ -31,46 +35,36 @@ public class StartActivity extends Activity {
 
         StrictMode.enableDefaults();
 
-        OAuthMain login = new OAuthMain(this, OAuthConstants.PUBLIC_KEY, OAuthConstants.SECRET);
 
         Log.e("Starting", " Startup");
 
+        API.setContext(this);
+        API.setFragmentManager(this.getSupportFragmentManager());
 
-        if (!login.isLoggedIn())
-        {
-            Log.i("vrbh/start", "Not logged in yet, starting login procedure");
+        final Context ct = this;
 
-            try {
-                login.authorize(new OAuthListener() {
-                    @Override
-                    public void onOAuthComplete() {
+        OAuthManager.OAuthCallback<Credential> callback = new OAuthManager.OAuthCallback<Credential>() {
+            @Override
+            public void run(OAuthManager.OAuthFuture<Credential> future) {
+                try {
+                    Credential credential = future.getResult();
+                    API.setCreds(credential);
 
-                        Log.e("onOAuthComplete", "OK!");
-                    }
+                    Log.d("startAcitivty/oauth", "Got creds!");
 
-                    @Override
-                    public void onOAuthCancel() {
-                        Log.e("onOAuthCancel", "Cancel!");
-                    }
+                    Intent detailIntent = new Intent(ct, productListActivity.class);
 
-                    @Override
-                    public void onOAuthError(int errorCode, String description, String failingUrl) {
-                        Log.e("startactivity/onoautherror", errorCode + ": " + description);
-                    }
-                });
-            } catch (OAuthException e) {
-                // Something went wrong with the connection to the server.
-                // @TODO: Display a nice message to the user instead just closing the app.
-                Log.e("startactivity/oauth/error", "Something went wrong with the server?", e);
-                this.finish();
-                return;
+                    startActivity(detailIntent);
+                    finish();
+                } catch (IOException e) {
+                    Log.e("Oauth error", "IO error during oauth", e);
+                }
             }
-        }
+        };
 
-        Intent detailIntent = new Intent(this, productListActivity.class);
+        API.getCredentials(callback);
 
-        startActivity(detailIntent);
-        this.finish();
+
     }
 
     /**
@@ -83,7 +77,7 @@ public class StartActivity extends Activity {
 
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                Bundle savedInstanceState) {
+                                 Bundle savedInstanceState) {
             return inflater.inflate(R.layout.fragment_start, container, false);
         }
     }
