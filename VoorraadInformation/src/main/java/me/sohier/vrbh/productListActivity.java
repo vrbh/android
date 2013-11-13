@@ -7,6 +7,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import me.sohier.vrbh.dummy.DummyContent;
+import me.sohier.vrbh.internal.API;
 
 
 /**
@@ -56,6 +57,9 @@ public class productListActivity extends FragmentActivity
 
         DummyContent.addItem(new DummyContent.DummyItem("5", " paul test dit 2"));
 
+        productListFragment lf = ((productListFragment) getSupportFragmentManager().findFragmentById(R.id.product_list));
+        lf.adapter.notifyDataSetChanged();
+
         // TODO: If exposing deep links into your app, handle intents here.
     }
 
@@ -67,6 +71,8 @@ public class productListActivity extends FragmentActivity
     public void onItemSelected(String id) {
 
         DummyContent.addItem(new DummyContent.DummyItem("6", " paul test dit 3"));
+        productListFragment lf = ((productListFragment) getSupportFragmentManager().findFragmentById(R.id.product_list));
+        lf.adapter.notifyDataSetChanged();
         if (mTwoPane) {
             // In two-pane mode, show the detail view in this activity by
             // adding or replacing the detail fragment using a
@@ -106,6 +112,14 @@ public class productListActivity extends FragmentActivity
             Intent settings = new Intent(this, SettingsActivity.class);
             startActivity(settings);
 
+            return true;
+        }
+        else if (id == R.id.action_logout)
+        {
+            API.getManager().deleteCredential("userId", null, null);
+            // @TODO: Make me nicer.
+            API.setCreds(null);
+            this.finish();
             return true;
         }
         return super.onOptionsItemSelected(item);

@@ -17,7 +17,8 @@ import com.google.api.client.json.jackson.JacksonFactory;
 import com.wuman.android.auth.oauth2.store.SharedPreferencesCredentialStore;
 
 import java.io.IOException;
-import java.util.Arrays;
+
+import me.sohier.vrbh.internal.APIClasses.User;
 
 /**
  * Created by paulsohier on 12-11-13.
@@ -25,7 +26,7 @@ import java.util.Arrays;
 public class API {
     private static final String CLIENT_ID = "4_5hjjrx830scgo8wwwcg40kwgo0cs88k8g8g4o88s40o8s0wswo";
     private static final String CLIENT_SECRET = "3q8u44bkkwe8ks0wswwk8w0ks0c0kww8440kc8skgoowo8w08k";
-    private static final String HOST = "http://10.0.2.2:8000";
+    private static final String HOST = "http://192.168.0.131:8000";//"http://10.0.2.2:8000";
     private static final String AUTHORIZE = "/oauth/v2/auth";
     private static final String REQUEST_TOKEN = "/oauth/v2/token";
 
@@ -46,11 +47,51 @@ public class API {
         creds = cr;
     }
 
+    public static User getLoggedInUser(APICallbackInterface callback)
+    {
+        if (creds == null)
+        {
+            getCredentials(null);
+        }
+
+        creds.getAccessToken();
+
+
+        return null;
+    }
+
     public static Credential getCredentials(OAuthManager.OAuthCallback<Credential> cb) {
         if (creds != null) {
             Log.d("vrbh/oauth", "Got locally saved creds");
-            return creds;
+            //return creds;
         }
+
+        if (manager == null)
+        {
+            manager = getManager();
+        }
+
+
+        if (manager == null) {
+            throw new RuntimeException("Creating oauth manager failed");
+        }
+
+        try {
+            if (cb == null) {
+                creds = manager.authorizeExplicitly("userId", cb, null).getResult();//authorizeExplicitly("userId", null, null).getResult();
+            } else {
+                manager.authorizeExplicitly("userId", cb, null);
+                ;
+            }
+        } catch (IOException e) {
+            Log.e("vrbh/API/OAuthcreds", "Unable to write data", e);
+            throw new RuntimeException("Unable to read/write data", e);
+        }
+
+        return creds;
+    }
+
+    public static OAuthManager getManager() {
         if (manager == null) {
 
             if (fragmentManager == null) {
@@ -103,22 +144,6 @@ public class API {
 
         }
 
-        if (manager == null) {
-            throw new RuntimeException("Creating oauth manager failed");
-        }
-
-        try {
-            if (cb == null) {
-                creds = manager.authorizeExplicitly("userId", cb, null).getResult();//authorizeExplicitly("userId", null, null).getResult();
-            } else {
-                manager.authorizeExplicitly("userId", cb, null);
-                ;
-            }
-        } catch (IOException e) {
-            Log.e("vrbh/API/OAuthcreds", "Unable to write data", e);
-            throw new RuntimeException("Unable to read/write data", e);
-        }
-
-        return creds;
+        return manager;
     }
 }

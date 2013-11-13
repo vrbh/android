@@ -28,4 +28,5 @@ dependencies {
 //	compile 'com.android.support:support-v4:18.0.0'
     compile 'com.wu-man:android-oauth-client:0.0.2'
     compile 'com.google.http-client:google-http-client-jackson:1.15.0-rc'
+    compile 'com.google.code.gson:gson:2.2.4'
 }
