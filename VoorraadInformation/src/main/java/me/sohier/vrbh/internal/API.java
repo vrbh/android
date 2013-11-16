@@ -21,6 +21,7 @@ import com.wuman.android.auth.oauth2.store.SharedPreferencesCredentialStore;
 import java.io.IOException;
 
 import me.sohier.vrbh.internal.APIClasses.User;
+import me.sohier.vrbh.productListFragment;
 
 /**
  * Created by paulsohier on 12-11-13.
@@ -28,9 +29,9 @@ import me.sohier.vrbh.internal.APIClasses.User;
 public class API {
     private static final String CLIENT_ID = "4_5hjjrx830scgo8wwwcg40kwgo0cs88k8g8g4o88s40o8s0wswo";
     private static final String CLIENT_SECRET = "3q8u44bkkwe8ks0wswwk8w0ks0c0kww8440kc8skgoowo8w08k";
-    private static final String HOST = "http://192.168.0.131:8000";//"http://10.0.2.2:8000";
-    private static final String AUTHORIZE = "/oauth/v2/auth";
-    private static final String REQUEST_TOKEN = "/oauth/v2/token";
+    public static final String HOST = "http://192.168.0.131:8000";//"http://10.0.2.2:8000";
+    public static final String AUTHORIZE = "/oauth/v2/auth";
+    public static final String REQUEST_TOKEN = "/oauth/v2/token";
 
     private static OAuthManager manager = null;
     private static FragmentManager fragmentManager = null;
@@ -64,10 +65,36 @@ public class API {
         return null;
     }
 
+    public static void refreshToken(final APICallbackInterface cb)
+    {
+        new Thread() {
+            @Override
+            public void run() {
+                if (getCredentials(null).getExpiresInSeconds() < 0)
+                {
+                    Log.d("vrbh/API/refreshToken", "Token expired: " + getCredentials(null).getExpiresInSeconds());
+                    try {
+                        boolean rs = getCredentials(null).refreshToken();
+                        Log.d("vrbh/API/refreshtoken", "Result: " + rs);
+                    } catch (IOException e) {
+                        Log.e("vrbh/API/refreshToken", "Refresh token failed", e);
+                        return;
+                    }
+                }
+                else
+                {
+                    Log.d("vrbh/API/refreshtoken", "Token not expired: " + getCredentials(null).getExpiresInSeconds());
+                }
+                cb.call();
+            }
+        }.start();
+    }
+
     public static Credential getCredentials(OAuthManager.OAuthCallback<Credential> cb) {
         if (creds != null) {
             Log.d("vrbh/oauth", "Got locally saved creds");
-            //return creds;
+
+            return creds;
         }
 
         if (manager == null)
