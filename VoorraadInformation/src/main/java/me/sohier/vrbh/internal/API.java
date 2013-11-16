@@ -4,6 +4,8 @@ import android.content.Context;
 import android.support.v4.app.FragmentManager;
 import android.util.Log;
 
+import com.android.volley.RequestQueue;
+import com.android.volley.toolbox.Volley;
 import com.google.api.client.auth.oauth2.BearerToken;
 import com.google.api.client.auth.oauth2.ClientParametersAuthentication;
 import com.google.api.client.auth.oauth2.Credential;
@@ -34,6 +36,8 @@ public class API {
     private static FragmentManager fragmentManager = null;
     private static Context context = null;
     private static Credential creds = null;
+
+    private static RequestQueue queue;
 
     public static void setFragmentManager(FragmentManager fragment) {
         fragmentManager = fragment;
@@ -145,5 +149,19 @@ public class API {
         }
 
         return manager;
+    }
+
+    public static RequestQueue getQueue()
+    {
+        if (queue == null)
+        {
+            if (context == null)
+            {
+                throw new RuntimeException("Context is null");
+            }
+
+            queue = Volley.newRequestQueue(context);
+        }
+        return queue;
     }
 }

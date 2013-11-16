@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<merger>
+
+    <dataSet config="main" >
+        <source path="/Users/paulsohier/AndroidStudioProjects/android/volley/assets" />
+    </dataSet>
+    <dataSet config="debug" >
+        <source path="/Users/paulsohier/AndroidStudioProjects/android/volley/src/debug/assets" />
+    </dataSet>
+
+</merger>

@@ -11,6 +11,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.android.volley.RequestQueue;
+import com.android.volley.toolbox.Volley;
 import com.google.api.client.auth.oauth2.Credential;
 import com.wuman.android.auth.OAuthManager;
 
@@ -42,6 +44,11 @@ public class StartActivity extends FragmentActivity {
         API.setFragmentManager(this.getSupportFragmentManager());
 
         final Context ct = this;
+
+        if (API.getQueue() == null)
+        {
+            throw new RuntimeException("Volley queue is null");
+        }
 
         OAuthManager.OAuthCallback<Credential> callback = new OAuthManager.OAuthCallback<Credential>() {
             @Override
