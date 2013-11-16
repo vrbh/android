@@ -2,9 +2,6 @@ package me.sohier.vrbh.internal;
 
 import android.util.Log;
 
-import com.google.gson.Gson;
-import com.google.gson.JsonSyntaxException;
-
 import com.android.volley.AuthFailureError;
 import com.android.volley.NetworkResponse;
 import com.android.volley.ParseError;
@@ -13,9 +10,10 @@ import com.android.volley.Response;
 import com.android.volley.Response.ErrorListener;
 import com.android.volley.Response.Listener;
 import com.android.volley.toolbox.HttpHeaderParser;
+import com.google.gson.Gson;
+import com.google.gson.JsonSyntaxException;
 
 import java.io.UnsupportedEncodingException;
-import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -31,8 +29,8 @@ public class GsonRequest<T> extends Request<T> {
     /**
      * Make a GET request and return a parsed object from JSON.
      *
-     * @param url URL of the request to make
-     * @param clazz Relevant class object, for Gson's reflection
+     * @param url     URL of the request to make
+     * @param clazz   Relevant class object, for Gson's reflection
      * @param headers Map of request headers
      */
     public GsonRequest(int method, String url, Class<T> clazz, Map<String, String> headers,
@@ -40,8 +38,7 @@ public class GsonRequest<T> extends Request<T> {
 
         super(method, makeUrl(url), errorListener);
 
-        if (headers == null)
-        {
+        if (headers == null) {
             headers = new HashMap<String, String>();
         }
         headers.put("Content-Type", "application/json");

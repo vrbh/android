@@ -23,7 +23,7 @@
 
     <fragment
         android:id="@+id/product_list"
-        android:name="me.sohier.vrbh.productListFragment"
+        android:name="me.sohier.vrbh.Fragments.productListFragment"
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:layout_weight="1"

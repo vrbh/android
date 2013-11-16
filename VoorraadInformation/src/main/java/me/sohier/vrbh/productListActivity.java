@@ -6,6 +6,8 @@ import android.support.v4.app.FragmentActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import me.sohier.vrbh.Fragments.productDetailFragment;
+import me.sohier.vrbh.Fragments.productListFragment;
 import me.sohier.vrbh.dummy.DummyContent;
 import me.sohier.vrbh.internal.API;
 
@@ -17,13 +19,13 @@ import me.sohier.vrbh.internal.API;
  * lead to a {@link productDetailActivity} representing
  * item details. On tablets, the activity presents the list of items and
  * item details side-by-side using two vertical panes.
- * <p>
+ * <p/>
  * The activity makes heavy use of fragments. The list of items is a
- * {@link productListFragment} and the item details
- * (if present) is a {@link productDetailFragment}.
- * <p>
+ * {@link me.sohier.vrbh.Fragments.productListFragment} and the item details
+ * (if present) is a {@link me.sohier.vrbh.Fragments.productDetailFragment}.
+ * <p/>
  * This activity also implements the required
- * {@link productListFragment.Callbacks} interface
+ * {@link me.sohier.vrbh.Fragments.productListFragment.Callbacks} interface
  * to listen for item selections.
  */
 public class productListActivity extends FragmentActivity
@@ -113,9 +115,7 @@ public class productListActivity extends FragmentActivity
             startActivity(settings);
 
             return true;
-        }
-        else if (id == R.id.action_logout)
-        {
+        } else if (id == R.id.action_logout) {
             API.getManager().deleteCredential("userId", null, null);
             // @TODO: Make me nicer.
             API.setCreds(null);

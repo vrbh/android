@@ -1,7 +1,6 @@
 package me.sohier.vrbh;
 
 import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
 import android.os.StrictMode;
 import android.support.v4.app.Fragment;
@@ -11,20 +10,16 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.android.volley.Request;
-import com.android.volley.RequestQueue;
 import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.Volley;
 import com.google.api.client.auth.oauth2.Credential;
 import com.wuman.android.auth.OAuthManager;
 
 import java.io.IOException;
 
+import me.sohier.vrbh.Fragments.NoOrgsYetFragment;
 import me.sohier.vrbh.internal.API;
-import me.sohier.vrbh.internal.APICallbackInterface;
 import me.sohier.vrbh.internal.APIClasses.User;
-import me.sohier.vrbh.internal.GsonRequest;
+import me.sohier.vrbh.internal.AlertDialogCallback;
 
 
 public class StartActivity extends FragmentActivity {
@@ -51,8 +46,7 @@ public class StartActivity extends FragmentActivity {
 
         final Context ct = this;
 
-        if (API.getQueue() == null)
-        {
+        if (API.getQueue() == null) {
             throw new RuntimeException("Volley queue is null");
         }
 
@@ -65,33 +59,25 @@ public class StartActivity extends FragmentActivity {
 
                     Log.d("startAcitivty/oauth", "Got creds!");
 
-                    API.refreshToken(new APICallbackInterface(){
+                    API.getUser(new Response.Listener<User>() {
 
                         @Override
-                        public void call() {
-                            GsonRequest<User> rq = new GsonRequest<User>(Request.Method.GET, "/api/user/current", User.class, null, new Response.Listener<User>(){
+                        public void onResponse(User response) {
+                            Log.d("StartActivity", "Started :D");
 
-                                @Override
-                                public void onResponse(User response) {
-                                    Log.d("StartActivity", "Started :D");
+                            Log.d("vrbh/start/user", "got a user: " + response.user.username);
 
-                                    Intent detailIntent = new Intent(ct, productListActivity.class);
+                            if (response.user.orgs.length == 0) {
+                                noOrgsYet();
+                            } else if (response.user.orgs.length == 1) {
 
-                                    startActivity(detailIntent);
-                                    finish();
-                                }
-                            }, new Response.ErrorListener(){
+                            } else {
+                                // User has a lot of orgs...
 
-                                @Override
-                                public void onErrorResponse(VolleyError error) {
-                                    Log.d("StartActivity", "Error during request to the server: " + error);
-                                }
-                            });
-
-
-                            API.getQueue().add(rq);
+                            }
                         }
                     });
+
                 } catch (IOException e) {
                     Log.e("Oauth error", "IO error during oauth", e);
                 }
@@ -101,6 +87,30 @@ public class StartActivity extends FragmentActivity {
         API.getCredentials(callback);
 
 
+    }
+
+
+    private void noOrgsYet() {
+        NoOrgsYetFragment newFragment = NoOrgsYetFragment.newInstance(
+                R.string.no_org, new AlertDialogCallback() {
+
+            @Override
+            public void doNegativeClick() {
+                Log.d("vrbh/start", "User cancelled.");
+                finish();
+            }
+
+            @Override
+            public void doJoinClick() {
+
+            }
+
+            @Override
+            public void doCreateClick() {
+
+            }
+        });
+        newFragment.show(getSupportFragmentManager(), "dialog");
     }
 
     /**

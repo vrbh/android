@@ -6,14 +6,16 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.NavUtils;
 import android.view.MenuItem;
 
+import me.sohier.vrbh.Fragments.productDetailFragment;
+
 /**
  * An activity representing a single product detail screen. This
  * activity is only used on handset devices. On tablet-size devices,
  * item details are presented side-by-side with a list of items
  * in a {@link productListActivity}.
- * <p>
+ * <p/>
  * This activity is mostly just a 'shell' activity containing nothing
- * more than a {@link productDetailFragment}.
+ * more than a {@link me.sohier.vrbh.Fragments.productDetailFragment}.
  */
 public class productDetailActivity extends FragmentActivity {
 

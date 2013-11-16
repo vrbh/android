@@ -4,28 +4,28 @@ import android.content.Context;
 import android.support.v4.app.FragmentManager;
 import android.util.Log;
 
+import com.android.volley.Request;
 import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
 import com.android.volley.toolbox.Volley;
 import com.google.api.client.auth.oauth2.BearerToken;
 import com.google.api.client.auth.oauth2.ClientParametersAuthentication;
 import com.google.api.client.auth.oauth2.Credential;
 import com.google.api.client.extensions.android.http.AndroidHttp;
 import com.google.api.client.http.GenericUrl;
+import com.google.api.client.json.jackson.JacksonFactory;
 import com.wuman.android.auth.AuthorizationDialogController;
 import com.wuman.android.auth.AuthorizationFlow;
 import com.wuman.android.auth.DialogFragmentController;
 import com.wuman.android.auth.OAuthManager;
-import com.google.api.client.json.jackson.JacksonFactory;
 import com.wuman.android.auth.oauth2.store.SharedPreferencesCredentialStore;
 
 import java.io.IOException;
 
 import me.sohier.vrbh.internal.APIClasses.User;
-import me.sohier.vrbh.productListFragment;
 
-/**
- * Created by paulsohier on 12-11-13.
- */
+
 public class API {
     private static final String CLIENT_ID = "4_5hjjrx830scgo8wwwcg40kwgo0cs88k8g8g4o88s40o8s0wswo";
     private static final String CLIENT_SECRET = "3q8u44bkkwe8ks0wswwk8w0ks0c0kww8440kc8skgoowo8w08k";
@@ -52,26 +52,13 @@ public class API {
         creds = cr;
     }
 
-    public static User getLoggedInUser(APICallbackInterface callback)
-    {
-        if (creds == null)
-        {
-            getCredentials(null);
-        }
-
-        creds.getAccessToken();
 
 
-        return null;
-    }
-
-    public static void refreshToken(final APICallbackInterface cb)
-    {
+    public static void refreshToken(final APICallbackInterface cb) {
         new Thread() {
             @Override
             public void run() {
-                if (getCredentials(null).getExpiresInSeconds() < 0)
-                {
+                if (getCredentials(null).getExpiresInSeconds() < 0) {
                     Log.d("vrbh/API/refreshToken", "Token expired: " + getCredentials(null).getExpiresInSeconds());
                     try {
                         boolean rs = getCredentials(null).refreshToken();
@@ -80,9 +67,7 @@ public class API {
                         Log.e("vrbh/API/refreshToken", "Refresh token failed", e);
                         return;
                     }
-                }
-                else
-                {
+                } else {
                     Log.d("vrbh/API/refreshtoken", "Token not expired: " + getCredentials(null).getExpiresInSeconds());
                 }
                 cb.call();
@@ -97,8 +82,7 @@ public class API {
             return creds;
         }
 
-        if (manager == null)
-        {
+        if (manager == null) {
             manager = getManager();
         }
 
@@ -178,17 +162,36 @@ public class API {
         return manager;
     }
 
-    public static RequestQueue getQueue()
-    {
-        if (queue == null)
-        {
-            if (context == null)
-            {
+    public static RequestQueue getQueue() {
+        if (queue == null) {
+            if (context == null) {
                 throw new RuntimeException("Context is null");
             }
 
             queue = Volley.newRequestQueue(context);
         }
         return queue;
+    }
+
+    public static void getUser(final Response.Listener<User> rs) {
+
+        API.refreshToken(new APICallbackInterface() {
+
+            @Override
+            public void call() {
+                GsonRequest<User> rq = new GsonRequest<User>(Request.Method.GET, "/api/user/current", User.class, null, rs, new Response.ErrorListener() {
+
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Log.d("StartActivity", "Error during request to the server: " + error);
+
+                        throw new RuntimeException();
+                    }
+                });
+
+
+                API.getQueue().add(rq);
+            }
+        });
     }
 }

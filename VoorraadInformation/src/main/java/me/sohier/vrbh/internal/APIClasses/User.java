@@ -1,7 +1,11 @@
 package me.sohier.vrbh.internal.APIClasses;
 
-/**
- * Created by paulsohier on 13-11-13.
- */
 public class User {
+
+    public Usr user;
+
+    public class Usr {
+        public Organisation orgs[];
+        public String username;
+    }
 }

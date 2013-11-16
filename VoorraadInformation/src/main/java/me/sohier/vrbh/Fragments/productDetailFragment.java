@@ -1,4 +1,4 @@
-package me.sohier.vrbh;
+package me.sohier.vrbh.Fragments;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -7,12 +7,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import me.sohier.vrbh.R;
 import me.sohier.vrbh.dummy.DummyContent;
 
 /**
  * A fragment representing a single product detail screen.
- * This fragment is either contained in a {@link productListActivity}
- * in two-pane mode (on tablets) or a {@link productDetailActivity}
+ * This fragment is either contained in a {@link me.sohier.vrbh.productListActivity}
+ * in two-pane mode (on tablets) or a {@link me.sohier.vrbh.productDetailActivity}
  * on handsets.
  */
 public class productDetailFragment extends Fragment {
@@ -48,7 +49,7 @@ public class productDetailFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
-            Bundle savedInstanceState) {
+                             Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_product_detail, container, false);
 
         // Show the dummy content as text in a TextView.

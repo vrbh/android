@@ -1,4 +1,4 @@
-package me.sohier.vrbh;
+package me.sohier.vrbh.Fragments;
 
 import android.app.Activity;
 import android.os.Bundle;
@@ -14,7 +14,7 @@ import me.sohier.vrbh.dummy.DummyContent;
  * also supports tablet devices by allowing list items to be given an
  * 'activated' state upon selection. This helps indicate which item is
  * currently being viewed in a {@link productDetailFragment}.
- * <p>
+ * <p/>
  * Activities containing this fragment MUST implement the {@link Callbacks}
  * interface.
  */
