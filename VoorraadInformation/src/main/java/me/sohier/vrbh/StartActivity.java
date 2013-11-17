@@ -26,6 +26,8 @@ import me.sohier.vrbh.internal.AlertDialogCallback;
 
 public class StartActivity extends FragmentActivity {
 
+    private boolean paused = false;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -38,15 +40,31 @@ public class StartActivity extends FragmentActivity {
 
         }
 
-        StrictMode.enableDefaults();
+        tryStartup();
+    }
+    @Override
+    protected void onResume()
+    {
+        super.onResume();
+        if (paused)
+        {
+        tryStartup();
+    }
+    }
+    @Override
+    protected void onPause()
+    {
+        super.onPause();
+        this.paused = true;
+    }
 
+    private void tryStartup() {
+        StrictMode.enableDefaults();
 
         Log.e("Starting", " Startup");
 
         API.setContext(this);
         API.setFragmentManager(this.getSupportFragmentManager());
-
-        final Context ct = this;
 
         if (API.getQueue() == null) {
             throw new RuntimeException("Volley queue is null");
@@ -91,11 +109,11 @@ public class StartActivity extends FragmentActivity {
 
     private void registerOrg() {
 
-        final Response.Listener<Organisation> rs = new Response.Listener<Organisation>() {
+        final Response.Listener<String> rs = new Response.Listener<String>() {
             @Override
-            public void onResponse(Organisation response) {
+            public void onResponse(String response) {
 
-                Log.d("vrbh/registerOrg/registerdone", "Register is done. Orgname: " + response.organisation.name);
+                Log.d("vrbh/registerOrg/registerdone", "Register is done. Orgname: " + response);
             }
         };
         CreateOrgFragment org = CreateOrgFragment.newInstance(true, rs);

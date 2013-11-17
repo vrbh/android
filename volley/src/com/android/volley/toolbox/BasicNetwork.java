@@ -114,7 +114,8 @@ public class BasicNetwork implements Network {
                 long requestLifetime = SystemClock.elapsedRealtime() - requestStart;
                 logSlowRequests(requestLifetime, request, responseContents, statusLine);
 
-                if (statusCode < 200 || statusCode > 299) {
+                // Modified: Added 400 check, as symfony returns a 400 in case of a wrong form.
+                if ((statusCode < 200 || statusCode > 299)  && statusCode != 400){
                     throw new IOException();
                 }
                 return new NetworkResponse(statusCode, responseContents, responseHeaders, false);

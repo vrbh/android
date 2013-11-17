@@ -29,9 +29,9 @@ import me.sohier.vrbh.internal.APIClasses.User;
 
 
 public class API {
-    private static final String CLIENT_ID = "4_5hjjrx830scgo8wwwcg40kwgo0cs88k8g8g4o88s40o8s0wswo";
-    private static final String CLIENT_SECRET = "3q8u44bkkwe8ks0wswwk8w0ks0c0kww8440kc8skgoowo8w08k";
-    public static final String HOST = "http://192.168.0.131:8000";//"http://10.0.2.2:8000";
+    private static final String CLIENT_ID = "1_62xbho1zy4wss8g0wcokwwgs0s8ow4s04cw0gocwc8gwk8wc4s";
+    private static final String CLIENT_SECRET = "6188eijypw0804ckg8owgow00ko4c40w888c0w04wows84oook";
+    public static final String HOST = "http://dev.voorraad-beheer.info/app_dev.php";//"http://10.0.2.2:8000";
     public static final String AUTHORIZE = "/oauth/v2/auth";
     public static final String REQUEST_TOKEN = "/oauth/v2/token";
 
@@ -78,7 +78,8 @@ public class API {
     }
 
     public static Credential getCredentials(OAuthManager.OAuthCallback<Credential> cb) {
-        if (creds != null) {
+        // Only use locally saved creds in case no callback is used!
+        if (creds != null && cb == null) {
             Log.d("vrbh/oauth", "Got locally saved creds");
 
             return creds;
@@ -87,7 +88,6 @@ public class API {
         if (manager == null) {
             manager = getManager();
         }
-
 
         if (manager == null) {
             throw new RuntimeException("Creating oauth manager failed");
@@ -196,7 +196,7 @@ public class API {
             }
         });
     }
-    public static void registerOrg(String name, final Response.Listener<Organisation> rs) {
+    public static void registerOrg(String name, final Response.Listener<String> rs) {
 
 
         final HashMap<String, String> map = new HashMap<String, String>();
@@ -206,7 +206,7 @@ public class API {
 
             @Override
             public void call() {
-                PostRequest<Organisation> rq = new PostRequest<Organisation>("/api/organistion", Organisation.class, null, rs, new Response.ErrorListener() {
+                PostRequest rq = new PostRequest("/api/organisation", null, rs, new Response.ErrorListener() {
 
                     @Override
                     public void onErrorResponse(VolleyError error) {

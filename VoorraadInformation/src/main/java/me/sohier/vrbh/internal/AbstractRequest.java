@@ -17,7 +17,7 @@ public abstract class AbstractRequest<T> extends Request<T> {
 
     private static String makeUrl(String url) {
         url = API.HOST + url;
-        url += "?&access_token=";
+        url += "?access_token=";
         url += API.getCredentials(null).getAccessToken();
 
         Log.d("GsonRequest", "URL: " + url);
