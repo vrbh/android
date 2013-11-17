@@ -5,12 +5,9 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
 import me.sohier.vrbh.R;
-import me.sohier.vrbh.internal.API;
 import me.sohier.vrbh.internal.APIClasses.Prd;
-import me.sohier.vrbh.internal.APIClasses.Product;
 
 /**
  * A fragment representing a single product detail screen.

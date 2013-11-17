@@ -29,4 +29,17 @@
     <string name="more_orgs_choose">More then one organisation found, please choose one</string>
     <string name="action_new_product">new product</string>
     <string name="menuitem_refresh">refresh</string>
+
+    <!-- -->
+    <string name="no_products_yet">There are no products yet for this organisation. Do you want to create a new product?</string>
+    <string name="create_product">Create new product</string>
+    <string name="update_product">Update product</string>
+    <string name="product_name">Product name</string>
+    <string name="product_description">Product description</string>
+    <string name="product_order_nr">Product order number</string>
+    <string name="product_ean">Product barcode</string>
+    <string name="product_stock_unit">Product stock unit</string>
+    <string name="product_order_unit">Product order unit</string>
+    <string name="product_min_stock">Minimal stock amount</string>
+    <string name="product_max_stock">Maximum stock amount</string>
 </resources>

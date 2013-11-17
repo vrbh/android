@@ -27,11 +27,11 @@ import com.wuman.android.auth.oauth2.store.SharedPreferencesCredentialStore;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 import me.sohier.vrbh.Fragments.productListFragment;
 import me.sohier.vrbh.R;
 import me.sohier.vrbh.internal.APIClasses.Prd;
-import me.sohier.vrbh.internal.APIClasses.Product;
 import me.sohier.vrbh.internal.APIClasses.User;
 
 
@@ -99,7 +99,7 @@ public class API {
         refreshList();
     }
 
-    public static void addProducts(ArrayList<Prd> list)
+    public static void addProducts(List<Prd> list)
     {
         products.clear();
         products.addAll(list);

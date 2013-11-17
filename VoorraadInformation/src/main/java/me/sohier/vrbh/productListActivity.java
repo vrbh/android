@@ -9,11 +9,24 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+
+import java.util.Arrays;
+import java.util.List;
+
+import me.sohier.vrbh.Fragments.CreateProductFragment;
+import me.sohier.vrbh.Fragments.NoProductsYetFragment;
 import me.sohier.vrbh.Fragments.productDetailFragment;
 import me.sohier.vrbh.Fragments.productListFragment;
 import me.sohier.vrbh.internal.API;
+import me.sohier.vrbh.internal.APICallbackInterface;
 import me.sohier.vrbh.internal.APIClasses.Prd;
+import me.sohier.vrbh.internal.APIClasses.Products;
 import me.sohier.vrbh.internal.APIClasses.User;
+import me.sohier.vrbh.internal.AlertDialogCallback;
+import me.sohier.vrbh.internal.GsonRequest;
 
 
 /**
@@ -42,11 +55,8 @@ public class productListActivity extends FragmentActivity
     private boolean mTwoPane;
     private User user;
     private int org;
-
     private Menu optionsMenu;
-
     private boolean refreshing;
-
     private Handler refresh = new Handler() {
         @Override
         public void handleMessage(Message msg) {
@@ -61,9 +71,7 @@ public class productListActivity extends FragmentActivity
                         refreshItem.setActionView(null);
                     }
                 }
-            }
-            else
-            {
+            } else {
                 Log.d("vrbh/productlistactivity/refresh", "Optionsmenu is null");
             }
         }
@@ -74,16 +82,11 @@ public class productListActivity extends FragmentActivity
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_product_list);
 
-        user = (User)getIntent().getSerializableExtra("user");
+        user = (User) getIntent().getSerializableExtra("user");
         org = getIntent().getIntExtra("org", 0);
 
-        productListFragment lf =  ((productListFragment) getSupportFragmentManager()
+        productListFragment lf = ((productListFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.product_list));
-
-        Prd prd = new Prd();
-        prd.name = "Testing...";
-
-        API.addProduct(prd);
 
         if (findViewById(R.id.product_detail_container) != null) {
             // The detail container view will be present only in the
@@ -97,10 +100,89 @@ public class productListActivity extends FragmentActivity
 
             lf.setActivateOnItemClick(true);
         }
+
+        updateProducts();
     }
 
-    public void refresh(boolean rf)
-    {
+    private void updateProducts() {
+        new Thread() {
+            @Override
+            public void run() {
+                refresh(true);
+
+                final Response.Listener<Products> rs = new Response.Listener<Products>() {
+
+                    @Override
+                    public void onResponse(Products response) {
+                        refresh(false);
+
+                        if (response.products.length > 0) {
+                            List<Prd> pr = Arrays.asList(response.products);
+
+                            API.addProducts(pr);
+                        } else {
+                            Log.d("vrbh/productlistactivivty/onresponse", "Empty product list");
+
+                            NoProductsYetFragment newFragment = NoProductsYetFragment.newInstance(
+                                    R.string.no_products_yet, new AlertDialogCallback() {
+
+                                @Override
+                                public void doNegativeClick() {
+                                    Log.d("vrbh/Productlistactivivty/createnewproduct", "User didn't want new product");
+                                }
+
+                                @Override
+                                public void doPositiveClick() {
+                                    Log.d("vrbh/Productlistactivivty/createnewproduct", "Starting to create new product");
+                                    createNewProduct();
+                                }
+
+                            });
+                            newFragment.show(getSupportFragmentManager(), "dialog");
+                        }
+
+                    }
+                };
+
+                API.refreshToken(new APICallbackInterface() {
+
+                    @Override
+                    public void call() {
+                        GsonRequest<Products> rq = new GsonRequest<Products>(Request.Method.GET, "/api/organisation/" + org + "/products", Products.class, null, rs, new Response.ErrorListener() {
+
+                            @Override
+                            public void onErrorResponse(VolleyError error) {
+                                Log.d("vrbh/productlistactivity/products/error", "Error during request to the server: " + error);
+
+                                throw new RuntimeException();
+                            }
+                        });
+
+
+                        API.getQueue().add(rq);
+                    }
+                });
+            }
+        }.start();
+    }
+
+    private void createNewProduct() {
+        final Response.Listener<String> rs = new Response.Listener<String>() {
+            @Override
+            public void onResponse(String response) {
+                refresh(true);
+
+                Log.d("vrbh/registerOrg/registerdone", "Register is done. Orgname: " + response);
+
+                updateProducts();
+            }
+        };
+
+        CreateProductFragment org = CreateProductFragment.newInstance(null, rs);
+        org.show(getSupportFragmentManager(), "create_product_dialog");
+    }
+
+    public void refresh(boolean rf) {
         Log.d("vrbh/productlist/changerefresh", "Changing refresh to " + rf);
         refreshing = rf;
         refresh.sendEmptyMessage(0);
@@ -161,11 +243,12 @@ public class productListActivity extends FragmentActivity
             API.setCreds(null);
             this.finish();
             return true;
-        }
-        else if (id == R.id.action_refresh)
-        {
-            refresh(true);
-return true;
+        } else if (id == R.id.action_new_product) {
+            createNewProduct();
+            return true;
+        } else if (id == R.id.action_refresh) {
+            updateProducts();
+            return true;
         }
         return super.onOptionsItemSelected(item);
     }
