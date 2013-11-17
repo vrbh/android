@@ -1,8 +1,11 @@
 package me.sohier.vrbh.internal;
 
 import android.content.Context;
+import android.os.Handler;
+import android.os.Message;
 import android.support.v4.app.FragmentManager;
 import android.util.Log;
+import android.widget.TextView;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -22,9 +25,13 @@ import com.wuman.android.auth.OAuthManager;
 import com.wuman.android.auth.oauth2.store.SharedPreferencesCredentialStore;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
 
-import me.sohier.vrbh.internal.APIClasses.Organisation;
+import me.sohier.vrbh.Fragments.productListFragment;
+import me.sohier.vrbh.R;
+import me.sohier.vrbh.internal.APIClasses.Prd;
+import me.sohier.vrbh.internal.APIClasses.Product;
 import me.sohier.vrbh.internal.APIClasses.User;
 
 
@@ -42,6 +49,20 @@ public class API {
 
     private static RequestQueue queue;
 
+    private static TextView status;
+
+    private static String text;
+
+    public static ArrayList<Prd> products = new ArrayList<Prd>();
+
+    private static Handler handler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            status.setText(API.text);
+        }
+
+    };
+
     public static void setFragmentManager(FragmentManager fragment) {
         fragmentManager = fragment;
     }
@@ -54,7 +75,46 @@ public class API {
         creds = cr;
     }
 
+    private static void refreshList()
+    {
+        productListFragment lf =  ((productListFragment) fragmentManager
+                .findFragmentById(R.id.product_list));
 
+        if (lf != null)
+        {
+            lf.adapter.notifyDataSetChanged();
+        }
+    }
+
+    public static void resetProducts()
+    {
+        products.clear();
+
+        refreshList();
+    }
+    public static void addProduct(Prd prd)
+    {
+        products.add(prd);
+
+        refreshList();
+    }
+
+    public static void addProducts(ArrayList<Prd> list)
+    {
+        products.clear();
+        products.addAll(list);
+        refreshList();
+    }
+
+    public static void setStatus(TextView status) {
+        Log.d("vrbh/API/setStatus", "setting status:" + status);
+        API.status = status;
+    }
+
+    public static void updateStatus(String text) {
+        API.text = text;
+        handler.sendEmptyMessage(0);
+    }
 
     public static void refreshToken(final APICallbackInterface cb) {
         new Thread() {
@@ -63,6 +123,7 @@ public class API {
                 if (getCredentials(null).getExpiresInSeconds() < 0) {
                     Log.d("vrbh/API/refreshToken", "Token expired: " + getCredentials(null).getExpiresInSeconds());
                     try {
+                        updateStatus(context.getString(R.string.token_expired));
                         boolean rs = getCredentials(null).refreshToken();
                         Log.d("vrbh/API/refreshtoken", "Result: " + rs);
                     } catch (IOException e) {
@@ -94,11 +155,12 @@ public class API {
         }
 
         try {
+            updateStatus(context.getString(R.string.logging_in));
             if (cb == null) {
                 creds = manager.authorizeExplicitly("userId", cb, null).getResult();//authorizeExplicitly("userId", null, null).getResult();
+                updateStatus(context.getString(R.string.logged_in));
             } else {
                 manager.authorizeExplicitly("userId", cb, null);
-                ;
             }
         } catch (IOException e) {
             Log.e("vrbh/API/OAuthcreds", "Unable to write data", e);
@@ -196,6 +258,7 @@ public class API {
             }
         });
     }
+
     public static void registerOrg(String name, final Response.Listener<String> rs) {
 
 
@@ -215,7 +278,6 @@ public class API {
                         throw new RuntimeException();
                     }
                 }, map);
-
 
                 API.getQueue().add(rq);
             }

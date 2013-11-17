@@ -1,10 +1,12 @@
 package me.sohier.vrbh.internal.APIClasses;
 
-public class Organisation {
+import java.io.Serializable;
+
+public class Organisation  implements Serializable {
     public Org organisation;
 
-    public class Org
-    {
+    public class Org  implements Serializable{
         public String name;
+        public int id;
     }
 }

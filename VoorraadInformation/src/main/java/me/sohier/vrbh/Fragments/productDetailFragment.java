@@ -8,7 +8,9 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import me.sohier.vrbh.R;
-import me.sohier.vrbh.dummy.DummyContent;
+import me.sohier.vrbh.internal.API;
+import me.sohier.vrbh.internal.APIClasses.Prd;
+import me.sohier.vrbh.internal.APIClasses.Product;
 
 /**
  * A fragment representing a single product detail screen.
@@ -18,15 +20,9 @@ import me.sohier.vrbh.dummy.DummyContent;
  */
 public class productDetailFragment extends Fragment {
     /**
-     * The fragment argument representing the item ID that this fragment
-     * represents.
-     */
-    public static final String ARG_ITEM_ID = "item_id";
-
-    /**
      * The dummy content this fragment is presenting.
      */
-    private DummyContent.DummyItem mItem;
+    private Prd mItem;
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -39,11 +35,11 @@ public class productDetailFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        if (getArguments().containsKey(ARG_ITEM_ID)) {
+        if (getArguments().containsKey("product")) {
             // Load the dummy content specified by the fragment
             // arguments. In a real-world scenario, use a Loader
             // to load content from a content provider.
-            mItem = DummyContent.ITEM_MAP.get(getArguments().getString(ARG_ITEM_ID));
+            mItem = (Prd)getArguments().getSerializable("product");
         }
     }
 
@@ -54,7 +50,7 @@ public class productDetailFragment extends Fragment {
 
         // Show the dummy content as text in a TextView.
         if (mItem != null) {
-            ((TextView) rootView.findViewById(R.id.product_detail)).setText(mItem.content);
+            //((TextView) rootView.findViewById(R.id.product_detail)).setText(mItem.content);
         }
 
         return rootView;

@@ -1,6 +1,6 @@
 package me.sohier.vrbh;
 
-import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.StrictMode;
 import android.support.v4.app.Fragment;
@@ -9,6 +9,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import com.android.volley.Response;
 import com.google.api.client.auth.oauth2.Credential;
@@ -19,7 +20,6 @@ import java.io.IOException;
 import me.sohier.vrbh.Fragments.CreateOrgFragment;
 import me.sohier.vrbh.Fragments.NoOrgsYetFragment;
 import me.sohier.vrbh.internal.API;
-import me.sohier.vrbh.internal.APIClasses.Organisation;
 import me.sohier.vrbh.internal.APIClasses.User;
 import me.sohier.vrbh.internal.AlertDialogCallback;
 
@@ -33,27 +33,26 @@ public class StartActivity extends FragmentActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_start);
 
-        if (savedInstanceState == null) {
-            getSupportFragmentManager().beginTransaction()
-                    .add(R.id.container, new PlaceholderFragment())
-                    .commit();
+        //if (savedInstanceState == null) {
+        getSupportFragmentManager().beginTransaction()
+                .add(R.id.container, new PlaceholderFragment())
+                .commit();
 
-        }
+        //}
 
-        tryStartup();
+
     }
+
     @Override
-    protected void onResume()
-    {
+    protected void onResume() {
         super.onResume();
-        if (paused)
-        {
-        tryStartup();
+        if (paused) {
+            tryStartup();
+        }
     }
-    }
+
     @Override
-    protected void onPause()
-    {
+    protected void onPause() {
         super.onPause();
         this.paused = true;
     }
@@ -65,6 +64,8 @@ public class StartActivity extends FragmentActivity {
 
         API.setContext(this);
         API.setFragmentManager(this.getSupportFragmentManager());
+
+        API.updateStatus(getString(R.string.starting));
 
         if (API.getQueue() == null) {
             throw new RuntimeException("Volley queue is null");
@@ -78,6 +79,7 @@ public class StartActivity extends FragmentActivity {
                     API.setCreds(credential);
 
                     Log.d("startAcitivty/oauth", "Got creds!");
+                    API.updateStatus(getString(R.string.logged_in));
 
                     API.getUser(new Response.Listener<User>() {
 
@@ -87,12 +89,25 @@ public class StartActivity extends FragmentActivity {
 
                             Log.d("vrbh/start/user", "got a user: " + response.user.username);
 
+                            API.updateStatus(getString(R.string.received_userdata));
+
                             if (response.user.orgs.length == 0) {
+                                API.updateStatus(getString(R.string.no_orgs_yet));
                                 noOrgsYet();
                             } else if (response.user.orgs.length == 1) {
 
+                                API.updateStatus(getString(R.string.one_org_starting));
+
+                                Intent detailIntent = new Intent(getApplicationContext(), productListActivity.class);
+
+                                detailIntent.putExtra("user", response);
+                                detailIntent.putExtra("org", response.user.orgs[0].id);
+
+                                startActivity(detailIntent);
+                                finish();
                             } else {
                                 // User has a lot of orgs...
+                                API.updateStatus(getString(R.string.more_orgs_choose));
 
                             }
                         }
@@ -146,7 +161,7 @@ public class StartActivity extends FragmentActivity {
     /**
      * A placeholder fragment containing a simple view.
      */
-    public static class PlaceholderFragment extends Fragment {
+    public class PlaceholderFragment extends Fragment {
 
         public PlaceholderFragment() {
         }
@@ -154,7 +169,13 @@ public class StartActivity extends FragmentActivity {
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                                  Bundle savedInstanceState) {
-            return inflater.inflate(R.layout.fragment_start, container, false);
+            View v = inflater.inflate(R.layout.fragment_start, container, false);
+
+            API.setStatus((TextView) v.findViewById(R.id.currentStatus));
+
+            tryStartup();
+
+            return v;
         }
     }
 }

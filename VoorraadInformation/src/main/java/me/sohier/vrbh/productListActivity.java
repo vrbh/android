@@ -2,14 +2,18 @@ package me.sohier.vrbh;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.support.v4.app.FragmentActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
 import me.sohier.vrbh.Fragments.productDetailFragment;
 import me.sohier.vrbh.Fragments.productListFragment;
-import me.sohier.vrbh.dummy.DummyContent;
 import me.sohier.vrbh.internal.API;
+import me.sohier.vrbh.internal.APIClasses.Prd;
+import me.sohier.vrbh.internal.APIClasses.User;
 
 
 /**
@@ -36,11 +40,50 @@ public class productListActivity extends FragmentActivity
      * device.
      */
     private boolean mTwoPane;
+    private User user;
+    private int org;
+
+    private Menu optionsMenu;
+
+    private boolean refreshing;
+
+    private Handler refresh = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            Log.d("vrbh/productlistactivity/refresh", "Received a message to change refresh");
+            if (optionsMenu != null) {
+                final MenuItem refreshItem = optionsMenu
+                        .findItem(R.id.action_refresh);
+                if (refreshItem != null) {
+                    if (refreshing) {
+                        refreshItem.setActionView(R.layout.menu_progress);
+                    } else {
+                        refreshItem.setActionView(null);
+                    }
+                }
+            }
+            else
+            {
+                Log.d("vrbh/productlistactivity/refresh", "Optionsmenu is null");
+            }
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_product_list);
+
+        user = (User)getIntent().getSerializableExtra("user");
+        org = getIntent().getIntExtra("org", 0);
+
+        productListFragment lf =  ((productListFragment) getSupportFragmentManager()
+                .findFragmentById(R.id.product_list));
+
+        Prd prd = new Prd();
+        prd.name = "Testing...";
+
+        API.addProduct(prd);
 
         if (findViewById(R.id.product_detail_container) != null) {
             // The detail container view will be present only in the
@@ -51,18 +94,16 @@ public class productListActivity extends FragmentActivity
 
             // In two-pane mode, list items should be given the
             // 'activated' state when touched.
-            ((productListFragment) getSupportFragmentManager()
-                    .findFragmentById(R.id.product_list))
-                    .setActivateOnItemClick(true);
+
+            lf.setActivateOnItemClick(true);
         }
+    }
 
-
-        DummyContent.addItem(new DummyContent.DummyItem("5", " paul test dit 2"));
-
-        productListFragment lf = ((productListFragment) getSupportFragmentManager().findFragmentById(R.id.product_list));
-        lf.adapter.notifyDataSetChanged();
-
-        // TODO: If exposing deep links into your app, handle intents here.
+    public void refresh(boolean rf)
+    {
+        Log.d("vrbh/productlist/changerefresh", "Changing refresh to " + rf);
+        refreshing = rf;
+        refresh.sendEmptyMessage(0);
     }
 
     /**
@@ -70,17 +111,14 @@ public class productListActivity extends FragmentActivity
      * indicating that the item with the given ID was selected.
      */
     @Override
-    public void onItemSelected(String id) {
+    public void onItemSelected(Prd product) {
 
-        DummyContent.addItem(new DummyContent.DummyItem("6", " paul test dit 3"));
-        productListFragment lf = ((productListFragment) getSupportFragmentManager().findFragmentById(R.id.product_list));
-        lf.adapter.notifyDataSetChanged();
         if (mTwoPane) {
             // In two-pane mode, show the detail view in this activity by
             // adding or replacing the detail fragment using a
             // fragment transaction.
             Bundle arguments = new Bundle();
-            arguments.putString(productDetailFragment.ARG_ITEM_ID, id);
+            arguments.putSerializable("product", product);
             productDetailFragment fragment = new productDetailFragment();
             fragment.setArguments(arguments);
             getSupportFragmentManager().beginTransaction()
@@ -91,13 +129,15 @@ public class productListActivity extends FragmentActivity
             // In single-pane mode, simply main_menu the detail activity
             // for the selected item ID.
             Intent detailIntent = new Intent(this, productDetailActivity.class);
-            detailIntent.putExtra(productDetailFragment.ARG_ITEM_ID, id);
+            detailIntent.putExtra("product", product);
+            detailIntent.putExtra("user", user);
             startActivity(detailIntent);
         }
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
+        this.optionsMenu = menu;
 
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.main_menu, menu);
@@ -121,6 +161,11 @@ public class productListActivity extends FragmentActivity
             API.setCreds(null);
             this.finish();
             return true;
+        }
+        else if (id == R.id.action_refresh)
+        {
+            refresh(true);
+return true;
         }
         return super.onOptionsItemSelected(item);
     }

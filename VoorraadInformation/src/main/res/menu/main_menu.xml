@@ -1,17 +1,30 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    tools:context=".StartActivity" >
-    
-    <item android:id="@+id/action_settings"
+    tools:context=".StartActivity">
+
+    <item
+        android:id="@+id/action_settings"
         android:title="@string/action_settings"
         android:orderInCategory="100"
-        android:showAsAction="never"
-        />
-    <item android:id="@+id/action_logout"
+        android:showAsAction="never" />
+    <item
+        android:id="@+id/action_logout"
         android:title="@string/logout"
         android:showAsAction="never" />
+    <item
+        android:id="@+id/action_new_product"
+        android:title="@string/action_new_product"
+        android:showAsAction="always" />
 
-    <item android:id="@+id/action_change_organisation"
+    <item
+        android:id="@+id/action_change_organisation"
         android:title="@string/change_org"
-        android:showAsAction="ifRoom"/>
+        android:showAsAction="ifRoom" />
+
+    <item android:id="@+id/action_refresh"
+        android:icon="@drawable/ic_action_refresh"
+        android:title="@string/menuitem_refresh"
+        android:alphabeticShortcut="r"
+        android:orderInCategory="1"
+        android:showAsAction="always" />
 </menu>

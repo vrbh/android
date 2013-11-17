@@ -7,7 +7,8 @@ import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
-import me.sohier.vrbh.dummy.DummyContent;
+import me.sohier.vrbh.internal.API;
+import me.sohier.vrbh.internal.APIClasses.Prd;
 
 /**
  * A list fragment representing a list of products. This fragment
@@ -36,7 +37,9 @@ public class productListFragment extends ListFragment {
      * The current activated item position. Only used on tablets.
      */
     private int mActivatedPosition = ListView.INVALID_POSITION;
-    public ArrayAdapter<DummyContent.DummyItem> adapter;
+    public ArrayAdapter<Prd> adapter;
+
+
 
     /**
      * A callback interface that all activities containing this fragment must
@@ -47,7 +50,7 @@ public class productListFragment extends ListFragment {
         /**
          * Callback for when an item has been selected.
          */
-        public void onItemSelected(String id);
+        public void onItemSelected(Prd product);
     }
 
     /**
@@ -56,7 +59,7 @@ public class productListFragment extends ListFragment {
      */
     private static Callbacks sDummyCallbacks = new Callbacks() {
         @Override
-        public void onItemSelected(String id) {
+        public void onItemSelected(Prd product) {
         }
     };
 
@@ -71,17 +74,13 @@ public class productListFragment extends ListFragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        adapter = new ArrayAdapter<DummyContent.DummyItem>(
+        adapter = new ArrayAdapter<Prd>(
                 getActivity(),
                 android.R.layout.simple_list_item_activated_1,
                 android.R.id.text1,
-                DummyContent.ITEMS);
+                API.products);
 
-        // TODO: replace with a real list adapter.
         setListAdapter(adapter);
-
-        DummyContent.addItem(new DummyContent.DummyItem("4", " paul test dit"));
-        adapter.notifyDataSetChanged();
 
     }
 
@@ -122,7 +121,7 @@ public class productListFragment extends ListFragment {
 
         // Notify the active callbacks interface (the activity, if the
         // fragment is attached to one) that an item has been selected.
-        mCallbacks.onItemSelected(DummyContent.ITEMS.get(position).id);
+        mCallbacks.onItemSelected(API.products.get(position));
     }
 
     @Override

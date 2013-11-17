@@ -1,11 +1,14 @@
 package me.sohier.vrbh.internal.APIClasses;
 
-public class User {
+import java.io.Serializable;
+
+public class User implements Serializable{
 
     public Usr user;
 
-    public class Usr {
+    public class Usr implements Serializable {
         public Organisation.Org orgs[];
         public String username;
+        public int id;
     }
 }

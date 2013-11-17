@@ -25,7 +25,7 @@ public abstract class AbstractRequest<T> extends Request<T> {
         return url;
     }
 
-    public  AbstractRequest(int method, String path, Map<String, String> headers, Response.Listener<T> listener, Response.ErrorListener errorListener) {
+    public AbstractRequest(int method, String path, Map<String, String> headers, Response.Listener<T> listener, Response.ErrorListener errorListener) {
         super(method, makeUrl(path), errorListener);
 
         this.headers = headers;

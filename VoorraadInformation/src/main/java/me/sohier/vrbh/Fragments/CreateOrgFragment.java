@@ -1,8 +1,5 @@
 package me.sohier.vrbh.Fragments;
 
-import android.app.AlertDialog;
-import android.app.Dialog;
-import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.view.LayoutInflater;
@@ -15,8 +12,6 @@ import com.android.volley.Response;
 
 import me.sohier.vrbh.R;
 import me.sohier.vrbh.internal.API;
-import me.sohier.vrbh.internal.APIClasses.Organisation;
-import me.sohier.vrbh.internal.AlertDialogInterface;
 
 
 public class CreateOrgFragment extends DialogFragment {
@@ -34,8 +29,7 @@ public class CreateOrgFragment extends DialogFragment {
         return frag;
     }
 
-    public void setListener(Response.Listener<String> rs)
-    {
+    public void setListener(Response.Listener<String> rs) {
         listener = rs;
     }
 
@@ -46,10 +40,10 @@ public class CreateOrgFragment extends DialogFragment {
         getDialog().setTitle(getString(R.string.create_org));
 
         // Watch for button clicks.
-        Button ok = (Button)v.findViewById(R.id.ok);
+        Button ok = (Button) v.findViewById(R.id.ok);
         ok.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v2) {
-                EditText text = (EditText)v.findViewById(R.id.org_name);
+                EditText text = (EditText) v.findViewById(R.id.org_name);
 
                 dismiss();
                 API.registerOrg(text.getText().toString(), listener);
@@ -57,15 +51,12 @@ public class CreateOrgFragment extends DialogFragment {
         });
 
         // Watch for button clicks.
-        Button cancel = (Button)v.findViewById(R.id.cancel);
+        Button cancel = (Button) v.findViewById(R.id.cancel);
         cancel.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v2) {
-                if (getArguments().getBoolean("cancel"))
-                {
+                if (getArguments().getBoolean("cancel")) {
                     getActivity().finish();
-                }
-                else
-                {
+                } else {
                     dismiss();
                 }
             }

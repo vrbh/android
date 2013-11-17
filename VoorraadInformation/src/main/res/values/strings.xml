@@ -4,7 +4,7 @@
     <string name="app_name">Stock Information</string>
     <string name="title_product_detail">Product Detail</string>
     <string name="title_activity_start">Stock Information</string>
-    <string name="start_application_login">We are trying to start the authentication process, please wait for a moment.</string>
+    <string name="start_application_login">Starting application...</string>
     <string name="action_settings">Settings</string>
     <string name="logout">Logout</string>
     <string name="change_org">Change organisation</string>
@@ -17,4 +17,16 @@
     <string name="create_org">Create a new organisation</string>
     <string name="cancel_will_close">Cancelling this action will close the application.</string>
 
+
+    <!-- Status texts -->
+    <string name="starting">Starting...</string>
+    <string name="logging_in">Logging into the server</string>
+    <string name="logged_in">Logged in</string>
+    <string name="received_userdata">Received userdata</string>
+    <string name="token_expired">Token expired, getting new login token</string>
+    <string name="no_orgs_yet">No organisations found</string>
+    <string name="one_org_starting">Organisation found, starting application</string>
+    <string name="more_orgs_choose">More then one organisation found, please choose one</string>
+    <string name="action_new_product">new product</string>
+    <string name="menuitem_refresh">refresh</string>
 </resources>

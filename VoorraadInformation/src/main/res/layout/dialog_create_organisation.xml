@@ -38,10 +38,12 @@
             style="?android:attr/buttonBarButtonStyle"
             android:text="@string/alert_dialog_ok" />
     </LinearLayout>
+
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:visibility="visible" android:id="@+id/cancel_close_warn"
+        android:visibility="visible"
+        android:id="@+id/cancel_close_warn"
         android:text="@string/cancel_will_close"
         android:textSize="10sp" />
 </LinearLayout>
