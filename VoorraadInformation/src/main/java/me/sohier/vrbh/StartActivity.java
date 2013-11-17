@@ -16,8 +16,10 @@ import com.wuman.android.auth.OAuthManager;
 
 import java.io.IOException;
 
+import me.sohier.vrbh.Fragments.CreateOrgFragment;
 import me.sohier.vrbh.Fragments.NoOrgsYetFragment;
 import me.sohier.vrbh.internal.API;
+import me.sohier.vrbh.internal.APIClasses.Organisation;
 import me.sohier.vrbh.internal.APIClasses.User;
 import me.sohier.vrbh.internal.AlertDialogCallback;
 
@@ -85,10 +87,20 @@ public class StartActivity extends FragmentActivity {
         };
 
         API.getCredentials(callback);
-
-
     }
 
+    private void registerOrg() {
+
+        final Response.Listener<Organisation> rs = new Response.Listener<Organisation>() {
+            @Override
+            public void onResponse(Organisation response) {
+
+                Log.d("vrbh/registerOrg/registerdone", "Register is done. Orgname: " + response.organisation.name);
+            }
+        };
+        CreateOrgFragment org = CreateOrgFragment.newInstance(true, rs);
+        org.show(getSupportFragmentManager(), "create_org_dialog");
+    }
 
     private void noOrgsYet() {
         NoOrgsYetFragment newFragment = NoOrgsYetFragment.newInstance(
@@ -107,7 +119,7 @@ public class StartActivity extends FragmentActivity {
 
             @Override
             public void doCreateClick() {
-
+                registerOrg();
             }
         });
         newFragment.show(getSupportFragmentManager(), "dialog");

@@ -5,7 +5,7 @@ public class User {
     public Usr user;
 
     public class Usr {
-        public Organisation orgs[];
+        public Organisation.Org orgs[];
         public String username;
     }
 }

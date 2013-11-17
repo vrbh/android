@@ -22,7 +22,9 @@ import com.wuman.android.auth.OAuthManager;
 import com.wuman.android.auth.oauth2.store.SharedPreferencesCredentialStore;
 
 import java.io.IOException;
+import java.util.HashMap;
 
+import me.sohier.vrbh.internal.APIClasses.Organisation;
 import me.sohier.vrbh.internal.APIClasses.User;
 
 
@@ -188,6 +190,31 @@ public class API {
                         throw new RuntimeException();
                     }
                 });
+
+
+                API.getQueue().add(rq);
+            }
+        });
+    }
+    public static void registerOrg(String name, final Response.Listener<Organisation> rs) {
+
+
+        final HashMap<String, String> map = new HashMap<String, String>();
+        map.put("name", name);
+
+        API.refreshToken(new APICallbackInterface() {
+
+            @Override
+            public void call() {
+                PostRequest<Organisation> rq = new PostRequest<Organisation>("/api/organistion", Organisation.class, null, rs, new Response.ErrorListener() {
+
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Log.d("StartActivity", "Error during request to the server: " + error);
+
+                        throw new RuntimeException();
+                    }
+                }, map);
 
 
                 API.getQueue().add(rq);

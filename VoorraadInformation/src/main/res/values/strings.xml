@@ -13,5 +13,8 @@
     <string name="alert_dialog_create">Create</string>
     <string name="alert_dialog_cancel">Cancel</string>
     <string name="no_org">You have no organisations yet in your account. Do you want to create or join one? </string>
+    <string name="organisiation_name">Organisation name</string>
+    <string name="create_org">Create a new organisation</string>
+    <string name="cancel_will_close">Cancelling this action will close the application.</string>
 
 </resources>
