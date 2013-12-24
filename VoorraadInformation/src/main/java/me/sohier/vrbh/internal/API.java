@@ -62,6 +62,7 @@ public class API {
         }
 
     };
+    private static productListFragment lf;
 
     public static void setFragmentManager(FragmentManager fragment) {
         fragmentManager = fragment;
@@ -75,32 +76,27 @@ public class API {
         creds = cr;
     }
 
-    private static void refreshList()
-    {
-        productListFragment lf =  ((productListFragment) fragmentManager
-                .findFragmentById(R.id.product_list));
-
-        if (lf != null)
-        {
+    public static void refreshList() {
+        if (lf != null) {
             lf.adapter.notifyDataSetChanged();
+        } else {
+            Log.e("vrbh/refreshList", "lf is null.");
         }
     }
 
-    public static void resetProducts()
-    {
+    public static void resetProducts() {
         products.clear();
 
         refreshList();
     }
-    public static void addProduct(Prd prd)
-    {
+
+    public static void addProduct(Prd prd) {
         products.add(prd);
 
         refreshList();
     }
 
-    public static void addProducts(List<Prd> list)
-    {
+    public static void addProducts(List<Prd> list) {
         products.clear();
         products.addAll(list);
         refreshList();
@@ -282,5 +278,13 @@ public class API {
                 API.getQueue().add(rq);
             }
         });
+    }
+
+    public static void setProductListFragment(productListFragment lf) {
+        API.lf = lf;
+    }
+
+    public static void addProductToServer(Prd product, Response.Listener<String> listener) {
+        Log.e("vrbh/start/adding/product", "Starting with adding product: " + product.name);
     }
 }

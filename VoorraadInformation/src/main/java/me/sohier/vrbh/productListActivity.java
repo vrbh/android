@@ -88,6 +88,8 @@ public class productListActivity extends FragmentActivity
         productListFragment lf = ((productListFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.product_list));
 
+        API.setProductListFragment(lf);
+
         if (findViewById(R.id.product_detail_container) != null) {
             // The detail container view will be present only in the
             // large-screen layouts (res/values-large and
@@ -100,7 +102,6 @@ public class productListActivity extends FragmentActivity
 
             lf.setActivateOnItemClick(true);
         }
-
         updateProducts();
     }
 
@@ -152,7 +153,7 @@ public class productListActivity extends FragmentActivity
 
                             @Override
                             public void onErrorResponse(VolleyError error) {
-                                Log.d("vrbh/productlistactivity/products/error", "Error during request to the server: " + error);
+                                Log.e("vrbh/productlistactivity/products/error", "Error during request to the server: ", error);
 
                                 throw new RuntimeException();
                             }
@@ -194,6 +195,8 @@ public class productListActivity extends FragmentActivity
      */
     @Override
     public void onItemSelected(Prd product) {
+
+        Log.e("vrbh/item/select", "Selected item: " + product.id);
 
         if (mTwoPane) {
             // In two-pane mode, show the detail view in this activity by

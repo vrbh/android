@@ -85,9 +85,10 @@ public class StartActivity extends FragmentActivity {
 
                         @Override
                         public void onResponse(User response) {
-                            Log.d("StartActivity", "Started :D");
+                            Log.e("StartActivity", "Started :D");
 
-                            Log.d("vrbh/start/user", "got a user: " + response.user.username);
+                            Log.e("vrbh/start/user", "got a user: " + response.user.username);
+
 
                             API.updateStatus(getString(R.string.received_userdata));
 

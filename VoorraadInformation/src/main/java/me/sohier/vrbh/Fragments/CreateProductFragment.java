@@ -11,6 +11,7 @@ import android.widget.EditText;
 import com.android.volley.Response;
 
 import me.sohier.vrbh.R;
+import me.sohier.vrbh.internal.API;
 import me.sohier.vrbh.internal.APIClasses.Prd;
 
 
@@ -93,7 +94,7 @@ public class CreateProductFragment extends DialogFragment {
                 } catch (NumberFormatException ignored) {
                 }
                 dismiss();
-                //API.addProductToServer(product, listener);
+                API.addProductToServer(product, listener);
             }
         });
 

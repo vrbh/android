@@ -9,6 +9,7 @@ import com.android.volley.Response.ErrorListener;
 import com.android.volley.Response.Listener;
 import com.android.volley.toolbox.HttpHeaderParser;
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.gson.JsonSyntaxException;
 
 import java.io.UnsupportedEncodingException;
@@ -18,7 +19,7 @@ import java.util.Map;
  * Volley adapter for JSON requests that will be parsed into Java objects by Gson.
  */
 public class GsonRequest<T> extends AbstractRequest<T> {
-    private final Gson gson = new Gson();
+    private final Gson gson = new GsonBuilder().setDateFormat("yyyy-MM-dd'T'HH:mm:ss").create();
     private final Class<T> clazz;
 
 
